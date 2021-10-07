@@ -84,7 +84,7 @@ pipeline {
                 rm -f *.tar.gz
                 mkdir -p ${TEST_DIR}
                 cd ${TEST_DIR}
-                wget https://raw.githubusercontent.com/Percona-QA/percona-qa/master/get_download_link.sh
+                wget https://raw.githubusercontent.com/eleo007/percona-qa/PS-7912/get_download_link.sh
                 chmod +x get_download_link.sh
                 wget -q ${PS_BIN}
                 if [ -z "${PT_BIN}" ]; then
@@ -98,7 +98,7 @@ pipeline {
                 PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                 mv binary.tar.gz ${PS_TARBALL}
                 cd -
-                git clone https://github.com/Percona-QA/percona-qa.git --depth 1
+                git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --storage-engine=innodb
                 '''
               }
@@ -136,7 +136,7 @@ pipeline {
                 rm -f *.tar.gz
                 mkdir -p ${TEST_DIR}
                 cd ${TEST_DIR}
-                wget https://raw.githubusercontent.com/Percona-QA/percona-qa/master/get_download_link.sh
+                wget https://raw.githubusercontent.com/eleo007/percona-qa/PS-7912/get_download_link.sh
                 chmod +x get_download_link.sh
                 wget -q ${PS_BIN}
                 if [ -z "${PT_BIN}" ]; then
@@ -150,7 +150,7 @@ pipeline {
                 PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                 mv binary.tar.gz ${PS_TARBALL}
                 cd -
-                git clone https://github.com/Percona-QA/percona-qa.git --depth 1
+                git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --storage-engine=rocksdb
                 '''
               }
@@ -188,7 +188,7 @@ pipeline {
                 rm -f *.tar.gz
                 mkdir -p ${TEST_DIR}
                 cd ${TEST_DIR}
-                wget https://raw.githubusercontent.com/Percona-QA/percona-qa/master/get_download_link.sh
+                wget https://raw.githubusercontent.com/eleo007/percona-qa/PS-7912/get_download_link.sh
                 chmod +x get_download_link.sh
                 wget -q ${PS_BIN}
                 if [ -z "${PT_BIN}" ]; then
@@ -202,7 +202,7 @@ pipeline {
                 PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                 mv binary.tar.gz ${PS_TARBALL}
                 cd -
-                git clone https://github.com/Percona-QA/percona-qa.git --depth 1
+                git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --storage-engine=tokudb
                 '''
               }
@@ -240,7 +240,7 @@ pipeline {
                 rm -f *.tar.gz
                 mkdir -p ${TEST_DIR}
                 cd ${TEST_DIR}
-                wget https://raw.githubusercontent.com/Percona-QA/percona-qa/master/get_download_link.sh
+                wget https://raw.githubusercontent.com/eleo007/percona-qa/PS-7912/get_download_link.sh
                 chmod +x get_download_link.sh
                 wget -q ${PS_BIN}
                 if [ -z "${PT_BIN}" ]; then
@@ -254,7 +254,7 @@ pipeline {
                 PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                 mv binary.tar.gz ${PS_TARBALL}
                 cd -
-                git clone https://github.com/Percona-QA/percona-qa.git --depth 1
+                git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --with-encryption --keyring-plugin=file
                 '''
               }
@@ -292,7 +292,7 @@ pipeline {
                 rm -f *.tar.gz
                 mkdir -p ${TEST_DIR}
                 cd ${TEST_DIR}
-                wget https://raw.githubusercontent.com/Percona-QA/percona-qa/master/get_download_link.sh
+                wget https://raw.githubusercontent.com/eleo007/percona-qa/PS-7912/get_download_link.sh
                 chmod +x get_download_link.sh
                 wget -q ${PS_BIN}
                 if [ -z "${PT_BIN}" ]; then
@@ -306,7 +306,7 @@ pipeline {
                 PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                 mv binary.tar.gz ${PS_TARBALL}
                 cd -
-                git clone https://github.com/Percona-QA/percona-qa.git --depth 1
+                git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --with-encryption --keyring-plugin=vault
                 '''
               }

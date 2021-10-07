@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # Created by Ramesh Sivaraman, Percona LLC
 # This will help us to test replication features
 # Master-Slave replication test

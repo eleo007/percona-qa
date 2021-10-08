@@ -149,8 +149,10 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
-                mv binary.tar.gz ${PS_TARBALL}
+                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                  PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
+                  mv binary.tar.gz ${PS_TARBALL}
+                fi
                 cd -
                 git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --storage-engine=rocksdb
@@ -201,8 +203,10 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
-                mv binary.tar.gz ${PS_TARBALL}
+                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                  PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
+                  mv binary.tar.gz ${PS_TARBALL}
+                fi
                 cd -
                 git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --storage-engine=tokudb
@@ -253,8 +257,10 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
-                mv binary.tar.gz ${PS_TARBALL}
+                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                  PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
+                  mv binary.tar.gz ${PS_TARBALL}
+                fi
                 cd -
                 git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --with-encryption --keyring-plugin=file
@@ -305,8 +311,10 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
-                mv binary.tar.gz ${PS_TARBALL}
+                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                  PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
+                  mv binary.tar.gz ${PS_TARBALL}
+                fi
                 cd -
                 git clone -b PS-7912 https://github.com/eleo007/percona-qa.git --depth 1
                 ${WORKSPACE}/percona-qa/ps-async-repl-test.sh --workdir=${WORKSPACE}/${TEST_DIR} --build-number=${BUILD_NUMBER} --testcase=${TEST_CASE} --with-encryption --keyring-plugin=vault

@@ -95,7 +95,7 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                if echo "${PS_BIN}" | grep -Eq "binary.tar.gz"; then
                   PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                   mv binary.tar.gz ${PS_TARBALL}
                 fi
@@ -149,7 +149,7 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                if echo "${PS_BIN}" | grep -Eq "binary.tar.gz"; then
                   PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                   mv binary.tar.gz ${PS_TARBALL}
                 fi
@@ -203,7 +203,7 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                if echo "${PS_BIN}" | grep -Eq "binary.tar.gz"; then
                   PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                   mv binary.tar.gz ${PS_TARBALL}
                 fi
@@ -257,7 +257,7 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                if echo "${PS_BIN}" | grep -Eq "binary.tar.gz"; then
                   PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                   mv binary.tar.gz ${PS_TARBALL}
                 fi
@@ -311,7 +311,7 @@ pipeline {
                 fi
                 wget -q ${PT_BIN}
                 wget -q ${PXB_BIN}
-                if [[ "${PS_BIN}" == *"binary.tar.gz" ]]; then
+                if echo "${PS_BIN}" | grep -Eq "binary.tar.gz"; then
                   PS_TARBALL="$(tar -ztf binary.tar.gz|head -n1|sed 's:/$::').tar.gz"
                   mv binary.tar.gz ${PS_TARBALL}
                 fi

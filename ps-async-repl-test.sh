@@ -407,6 +407,11 @@ function async_rpl_test(){
         echo "tokudb-check-jemalloc=0" >> ${PS_BASEDIR}/n${i}.cnf
         echo "init-file=${SCRIPT_PWD}/TokuDB.sql" >> ${PS_BASEDIR}/n${i}.cnf
         echo "default-storage-engine=tokudb" >> ${PS_BASEDIR}/n${i}.cnf
+# TokuDB is going to be discontinued in PS 8.0.28. In PS 8.0.26 it can be enabled only with the additional options in conf file.
+        if check_for_version $MYSQL_VERSION "8.0.26" ; then
+          echo "loose-tokudb_enabled=1" >> ${PS_BASEDIR}/n${i}.cnf
+          echo "loose-tokudb_backup_enabled=1" >> ${PS_BASEDIR}/n${i}.cnf
+        fi
       fi
       if [[ "$EXTRA_OPT" == "GR" ]]; then
         echo "binlog_checksum=none" >> ${PS_BASEDIR}/n${i}.cnf

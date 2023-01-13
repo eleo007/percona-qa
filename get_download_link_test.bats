@@ -16,6 +16,8 @@ function is_zip(){
 }
 @test "check ps for centos" {
   run ./get_download_link.sh --product ps --distribution centos
+  [ "$status" -eq 0 ]
+  [ "$(echo $output | grep -c 'ssl101')" -eq 1 ]
   is_zip
 }
 @test "check ps for ubuntu bionic" {

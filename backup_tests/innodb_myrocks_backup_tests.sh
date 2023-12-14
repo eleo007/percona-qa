@@ -1232,7 +1232,7 @@ test_add_drop_index() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1256,7 +1256,7 @@ test_add_drop_full_text_index() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1297,7 +1297,7 @@ test_add_drop_tablespace() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1335,7 +1335,7 @@ test_change_row_format() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1410,7 +1410,7 @@ test_update_truncate_table() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1426,7 +1426,7 @@ test_create_drop_database() {
 
     create_drop_database
 
-    incremental_backup "--lock-ddl"
+    incremental_backup "--lock-ddl=ON"
 }
 
 test_compressed_column() {
@@ -1461,7 +1461,7 @@ test_partitioned_tables() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1512,7 +1512,7 @@ test_run_all_statements() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 
@@ -1589,7 +1589,7 @@ test_inc_backup_encryption_8_0() {
 
         echo "Test1.7: Various test suites: binlog-encryption is not included so that binlog can be applied"
 
-        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "${server_options}"'
+        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "${server_options}"'
 
     elif [ "${encrypt_type}" = "keyring_vault_plugin" ]; then
 
@@ -1664,7 +1664,7 @@ test_inc_backup_encryption_8_0() {
 
         echo "Test2.7: Various test suites: binlog-encryption is not included so that binlog can be applied"
 
-        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "${server_options}"'
+        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "${server_options}"'
 
     elif [ "${encrypt_type}" = "keyring_vault_component" ]; then
 
@@ -1760,7 +1760,7 @@ EOF
 
          echo "3.7:Various test suites: binlog-encryption is not included so that binlog can be applied"
 
-         lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
+         lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
 
     elif [ "${encrypt_type}" = "keyring_file_component" ]; then
         if [ $VERSION -ge 080000 ]; then
@@ -1855,7 +1855,7 @@ EOF
 
         echo "Test4.7:Various test suites: binlog-encryption is not included so that binlog can be applied"
 
-        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
+        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
 
     elif [ "${encrypt_type}" = "keyring_kmip_component" ]; then
         if ${mysqldir}/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
@@ -1941,7 +1941,7 @@ EOF
 
         echo "Test5.7: Various test suites: binlog-encryption is not included so that binlog can be applied"
 
-        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
+        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
 
     elif [ "${encrypt_type}" = "keyring_kms_component" ]; then
         if ${mysqldir}/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
@@ -2052,7 +2052,7 @@ EOF
 
         echo "Test6.7: Various test suites: binlog-encryption is not included so that binlog can be applied"
 
-        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
+        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options} ${pxb_component_config}" "${pxb_encrypt_options}" "${server_options}"'
 
     else
         echo "[ERROR] Invalid $encrypt_type is not supported in PS/MS-${VER}"
@@ -2219,7 +2219,7 @@ test_inc_backup_encryption_2_4() {
         else
             initialize_db "--early-plugin-load=keyring_file.so --keyring_file_data=${mysqldir}/keyring --innodb-encrypt-tables=ON --encrypt-tmp-files --innodb-temp-tablespace-encrypt --innodb-encrypt-online-alter-logs=ON --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32"
 
-            lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "--early-plugin-load=keyring_file.so --keyring_file_data=${mysqldir}/keyring --innodb-encrypt-tables=ON --encrypt-tmp-files --innodb-temp-tablespace-encrypt --innodb-encrypt-online-alter-logs=ON --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32"'
+            lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "--early-plugin-load=keyring_file.so --keyring_file_data=${mysqldir}/keyring --innodb-encrypt-tables=ON --encrypt-tmp-files --innodb-temp-tablespace-encrypt --innodb-encrypt-online-alter-logs=ON --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32"'
         fi
 
     elif [ "${encrypt_type}" = "keyring_vault_plugin" ]; then
@@ -2277,7 +2277,7 @@ test_inc_backup_encryption_2_4() {
 
         initialize_db "${server_options}"
 
-        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "${server_options}"'
+        lock_ddl_cmd='incremental_backup "${pxb_encrypt_options} --lock-ddl=ON" "${pxb_encrypt_options}" "${pxb_encrypt_options}" "${server_options}"'
     fi
 
     # Running test suites with lock ddl backup command
@@ -2717,7 +2717,7 @@ test_invisible_column() {
 
     add_drop_invisible_column
 
-    incremental_backup "--lock-ddl"
+    incremental_backup "--lock-ddl=ON"
 }
 
 test_blob_column() {
@@ -2730,7 +2730,7 @@ test_blob_column() {
     if ${mysqldir}/bin/mysqld --version | grep "5.7" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
         incremental_backup "--lock-ddl-per-table"
     else
-        incremental_backup "--lock-ddl"
+        incremental_backup "--lock-ddl=ON"
     fi
 }
 

@@ -15,8 +15,8 @@
 #############################################################################
 
 # Set script variables
-export xtrabackup_dir="$HOME/pxb-8.0/bld_8.0.35/install/bin"
-export mysqldir="$HOME/mysql-8.0/bld_8.0.35/install"
+export xtrabackup_dir="$HOME/PXB-8.0/target/bin"
+export mysqldir="$HOME/upstream-8.2/bld_8.2/install"
 export datadir="${mysqldir}/data"
 export backup_dir="$HOME/dbbackup_$(date +"%d_%m_%Y")"
 export PATH="$PATH:$xtrabackup_dir"
@@ -28,7 +28,8 @@ export mysql_start_timeout=60
 load_tool="pstress" # Set value as pquery/pstress/sysbench
 num_tables=10 # Used for Sysbench
 table_size=1000 # Used for Sysbench
-tool_dir="$HOME/pstress/src" # Pquery/pstress dir
+tool_dir="$HOME/pstress_mysql_8.2/src/" # Pquery/pstress dir
+
 
 if ${mysqldir}/bin/mysqld --version | grep "MySQL Community Server" > /dev/null 2>&1 ; then
   MS=1
@@ -150,13 +151,13 @@ take_backup() {
     if [ "$?" -ne 0 ]; then
       grep -e "PXB will not be able to make a consistent backup" -e "PXB will not be able to take a consistent backup" "${logdir}"/inc${inc_num}_backup_"${log_date}"_log
       if [ "$?" -eq 0 ]; then
-        echo "Retrying incremental backup with --lock-ddl option"
+        echo "Retrying incremental backup with --lock-ddl=ON option"
         rm -r "${backup_dir}"/inc${inc_num}
 
         if [[ "${inc_num}" -eq 1 ]]; then
-          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/full -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl --register-redo-log-consumer 2>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
+          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/full -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl=ON --register-redo-log-consumer 2>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
         else
-          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/inc$((inc_num - 1)) -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl --register-redo-log-consumer 2>>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
+          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/inc$((inc_num - 1)) -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl=ON --register-redo-log-consumer 2>>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
           if [ "$?" -ne 0 ]; then
             echo "ERR: Incremental Backup failed. Please check the log at: ${logdir}/inc${inc_num}_backup_${log_date}_log"
             exit 1
@@ -330,7 +331,7 @@ start_server() {
 run_load_tests() {
     # This function runs the load backup tests with normal options
     MYSQLD_OPTIONS="--log-bin=binlog --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --max-connections=5000"
-    BACKUP_PARAMS="--core-file --lock-ddl"
+    BACKUP_PARAMS="--core-file --lock-ddl=ON"
     PREPARE_PARAMS="--core-file"
     RESTORE_PARAMS=""
 
@@ -350,7 +351,7 @@ run_load_tests() {
         load_tool="sysbench"
 
         echo "Test: Incremental Backup and Restore with ${load_tool} and using memory estimation"
-        BACKUP_PARAMS="--core-file --lock-ddl"
+        BACKUP_PARAMS="--core-file --lock-ddl=ON"
         PREPARE_PARAMS="--core-file --use-free-memory-pct=20"
     else
         echo "Test: Incremental Backup and Restore with ${load_tool}"
@@ -368,7 +369,7 @@ run_load_tests() {
 
     if [[ "$1" = "pagetracking" ]]; then
         echo "Running test with page tracking enabled"
-        BACKUP_PARAMS="--core-file --lock-ddl --page-tracking"
+        BACKUP_PARAMS="--core-file --lock-ddl=ON --page-tracking"
         "${mysqldir}"/bin/mysql -uroot -S"${mysqldir}"/socket.sock -e "INSTALL COMPONENT 'file://component_mysqlbackup';"
     fi
 
@@ -381,7 +382,7 @@ run_load_tests() {
 run_load_keyring_plugin_tests() {
 
   # This function runs the load backup tests with keyring_file plugin options
-  BACKUP_PARAMS="--keyring_file_data=${mysqldir}/keyring --xtrabackup-plugin-dir=${xtrabackup_dir}/../lib/plugin --core-file --lock-ddl"
+  BACKUP_PARAMS="--keyring_file_data=${mysqldir}/keyring --xtrabackup-plugin-dir=${xtrabackup_dir}/../lib/plugin --core-file --lock-ddl=ON"
   PREPARE_PARAMS="--keyring_file_data=${mysqldir}/keyring --xtrabackup-plugin-dir=${xtrabackup_dir}/../lib/plugin --core-file"
   RESTORE_PARAMS="${PREPARE_PARAMS}"
 
@@ -685,14 +686,14 @@ run_crash_tests_pstress() {
     elif [[ "${test_type}" = "rocksdb" ]]; then
       echo "Running crash tests with ${load_tool} for rocksdb"
       MYSQLD_OPTIONS="--log-bin=binlog --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --max-connections=5000"
-      BACKUP_PARAMS="--core-file --lock-ddl"
+      BACKUP_PARAMS="--core-file --lock-ddl=ON"
       PREPARE_PARAMS="--core-file"
       RESTORE_PARAMS=""
       load_options="--tables 10 --records 1000 --threads 10 --seconds 150 --no-encryption --engine=rocksdb"
     else
       echo "Running crash tests with ${load_tool}"
       MYSQLD_OPTIONS="--log-bin=binlog --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --max-connections=5000"
-      BACKUP_PARAMS="--core-file --lock-ddl"
+      BACKUP_PARAMS="--core-file --lock-ddl=ON"
       PREPARE_PARAMS="--core-file"
       RESTORE_PARAMS=""
       if [ $MS -eq 1 ]; then

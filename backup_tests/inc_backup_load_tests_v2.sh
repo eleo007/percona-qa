@@ -388,8 +388,8 @@ run_load_keyring_plugin_tests() {
 
   tool_options_encrypt_no_alter="--tables 10 --records 200 --threads 10 --seconds 30 --undo-tbs-sql 0 --alt-tbs-enc 0 --alter-table-encrypt 0 --no-tbs 0 --no-temp-tables 1"
 
-  if "${mysqldir}"/bin/mysqld --version | grep "8.0" >/dev/null 2>&1 ; then
-      if ${mysqldir}/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
+  if "${mysqldir}"/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
+      if ${mysqldir}/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
         # Server is MS 8.0
         MYSQLD_OPTIONS="--early-plugin-load=keyring_file.so --keyring_file_data=${mysqldir}/keyring --innodb-undo-log-encrypt --innodb-redo-log-encrypt --default-table-encryption=ON --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --binlog-rotate-encryption-master-key-at-startup --table-encryption-privilege-check=ON --max-connections=5000 --binlog-encryption"
         tool_options_encrypt="--tables 10 --records 200 --threads 10 --seconds 150 --undo-tbs-sql 0 --no-column-compression" # Used for pstress
@@ -435,7 +435,7 @@ run_load_keyring_component_tests() {
     PREPARE_PARAMS="${BACKUP_PARAMS} --component-keyring-config="${mysqldir}"/lib/plugin/component_keyring_file.cnf"
     RESTORE_PARAMS="${BACKUP_PARAMS}"
 
-    if "${mysqldir}"/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
+    if "${mysqldir}"/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
         # Server is MS 8.0
         MYSQLD_OPTIONS="--innodb-undo-log-encrypt --innodb-redo-log-encrypt --default-table-encryption=ON --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --binlog-rotate-encryption-master-key-at-startup --table-encryption-privilege-check=ON --max-connections=5000 --binlog-encryption"
 
@@ -500,7 +500,7 @@ run_load_kmip_component_tests() {
   PREPARE_PARAMS="${BACKUP_PARAMS} --component-keyring-config="${mysqldir}"/lib/plugin/component_keyring_kmip.cnf"
   RESTORE_PARAMS="${BACKUP_PARAMS}"
 
-  if "${mysqldir}"/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
+  if "${mysqldir}"/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
     # Server is MS 8.0
     echo "MS 8.0 does not support keyring kmip for encryption, skipping keyring kmip tests"
     return
@@ -566,7 +566,7 @@ run_load_kms_component_tests() {
     PREPARE_PARAMS="${BACKUP_PARAMS} --component-keyring-config="${mysqldir}"/lib/plugin/component_keyring_kms.cnf"
     RESTORE_PARAMS="${BACKUP_PARAMS}"
 
-    if "${mysqldir}"/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
+    if "${mysqldir}"/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
         # Server is MS 8.0
         echo "MS 8.0 does not support keyring kms for encryption, skipping keyring kms tests"
         return
@@ -656,8 +656,8 @@ run_crash_tests_pstress() {
 
     if [[ "${test_type}" = "encryption" ]]; then
       echo "Running crash tests with ${load_tool} and mysql running with encryption"
-      if "${mysqldir}"/bin/mysqld --version | grep "8.0" >/dev/null 2>&1 ; then
-        if ${mysqldir}/bin/mysqld --version | grep "8.0" | grep "MySQL Community Server" >/dev/null 2>&1 ; then
+      if "${mysqldir}"/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
+        if ${mysqldir}/bin/mysqld --version | grep "8.2" >/dev/null 2>&1 ; then
           # Server is MS 8.0
           MYSQLD_OPTIONS="--early-plugin-load=keyring_file.so --keyring_file_data=${mysqldir}/keyring --innodb-undo-log-encrypt --innodb-redo-log-encrypt --default-table-encryption=ON --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --binlog-rotate-encryption-master-key-at-startup --table-encryption-privilege-check=ON --max-connections=5000 --binlog-encryption"
           load_options="--tables 10 --records 200 --threads 10 --seconds 50 --undo-tbs-sql 0 --no-column-compression" # MS does not support column compression
@@ -969,7 +969,7 @@ for tsuitelist in $*; do
         echo "Rocksdb backup is not supported in MS/PS 5.7, skipping tests"
 	continue
       fi
-      if ${mysqldir}/bin/mysqld --version | grep "MySQL Community Server" > /dev/null 2>&1 ; then
+      if ${mysqldir}/bin/mysqld --version | grep "8.2.0" > /dev/null 2>&1 ; then
         echo "RocksDB is unsupported in MS, skipping tests"
         continue
       fi

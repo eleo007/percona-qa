@@ -31,11 +31,11 @@ table_size=1000 # Used for Sysbench
 tool_dir="$HOME/pstress_mysql_8.2/src/" # Pquery/pstress dir
 
 
-if ${mysqldir}/bin/mysqld --version | grep "MySQL Community Server" > /dev/null 2>&1 ; then
-  MS=1
-else
-  MS=0
-fi
+# if ${mysqldir}/bin/mysqld --version | grep "MySQL Community Server" > /dev/null 2>&1 ; then
+MS=1
+# else
+#   MS=0
+# fi
 # Set Kmip configuration
 setup_kmip() {
   # Kill and existing kmip server
@@ -113,7 +113,7 @@ run_load() {
   elif [[ "${load_tool}" = "pstress" ]]; then
     echo "Run pstress with options: ${tool_options}"
     pushd "$tool_dir" >/dev/null 2>&1 || exit
-    ./pstress-ps ${tool_options} --logdir=${logdir}/pstress --socket ${mysqldir}/socket.sock  > $logdir/pstress/pstress.log &
+    ./pstress-ms ${tool_options} --logdir=${logdir}/pstress --socket ${mysqldir}/socket.sock  > $logdir/pstress/pstress.log &
     popd >/dev/null 2>&1 || exit
     sleep 2
   else
@@ -312,7 +312,7 @@ check_tables() {
 start_server() {
   # This function starts the server
   echo "=>Starting MySQL server"
-  rr $mysqldir/bin/mysqld --no-defaults --basedir=$mysqldir --datadir=$datadir $MYSQLD_OPTIONS --port=21000 --socket=$mysqldir/socket.sock --plugin-dir=$mysqldir/lib/plugin --max-connections=1024 --log-error=$datadir/error.log  --general-log --log-error-verbosity=3 --core-file > /dev/null 2>&1 &
+  $mysqldir/bin/mysqld --no-defaults --basedir=$mysqldir --datadir=$datadir $MYSQLD_OPTIONS --port=21000 --socket=$mysqldir/socket.sock --plugin-dir=$mysqldir/lib/plugin --max-connections=1024 --log-error=$datadir/error.log  --general-log --log-error-verbosity=3 --core-file > /dev/null 2>&1 &
   MPID="$!"
 
   for X in $(seq 0 ${mysql_start_timeout}); do
@@ -723,7 +723,7 @@ run_crash_tests_pstress() {
 
     echo "=>Run pstress to prepare metadata: ${load_options}"
     pushd "$tool_dir" >/dev/null 2>&1 || exit
-    ./pstress-ps ${load_options} --prepare --exact-initial-records --logdir=${logdir}/pstress --socket ${mysqldir}/socket.sock >"${logdir}"/pstress/pstress_prepare.log
+    ./pstress-ms ${load_options} --prepare --exact-initial-records --logdir=${logdir}/pstress --socket ${mysqldir}/socket.sock >"${logdir}"/pstress/pstress_prepare.log
     popd >/dev/null 2>&1 || exit
     echo "..Metadata created"
     run_load "${load_options} --step 2"

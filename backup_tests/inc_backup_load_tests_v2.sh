@@ -151,13 +151,13 @@ take_backup() {
     if [ "$?" -ne 0 ]; then
       grep -e "PXB will not be able to make a consistent backup" -e "PXB will not be able to take a consistent backup" "${logdir}"/inc${inc_num}_backup_"${log_date}"_log
       if [ "$?" -eq 0 ]; then
-        echo "Retrying incremental backup with --lock-ddl=ON option"
+        echo "Retrying incremental backup with --lock-ddl=REDUCED option"
         rm -r "${backup_dir}"/inc${inc_num}
 
         if [[ "${inc_num}" -eq 1 ]]; then
-          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/full -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl=ON --register-redo-log-consumer 2>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
+          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/full -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl=REDUCED --register-redo-log-consumer 2>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
         else
-          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/inc$((inc_num - 1)) -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl=ON --register-redo-log-consumer 2>>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
+          "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/inc${inc_num} --incremental-basedir="${backup_dir}"/inc$((inc_num - 1)) -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --lock-ddl=REDUCED --register-redo-log-consumer 2>>"${logdir}"/inc${inc_num}_backup_"${log_date}"_log
           if [ "$?" -ne 0 ]; then
             echo "ERR: Incremental Backup failed. Please check the log at: ${logdir}/inc${inc_num}_backup_${log_date}_log"
             exit 1
@@ -331,7 +331,7 @@ start_server() {
 run_load_tests() {
     # This function runs the load backup tests with normal options
     MYSQLD_OPTIONS="--log-bin=binlog --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --max-connections=5000"
-    BACKUP_PARAMS="--core-file --lock-ddl=ON"
+    BACKUP_PARAMS="--core-file --lock-ddl=REDUCED"
     PREPARE_PARAMS="--core-file"
     RESTORE_PARAMS=""
 
@@ -351,7 +351,7 @@ run_load_tests() {
         load_tool="sysbench"
 
         echo "Test: Incremental Backup and Restore with ${load_tool} and using memory estimation"
-        BACKUP_PARAMS="--core-file --lock-ddl=ON"
+        BACKUP_PARAMS="--core-file --lock-ddl=REDUCED"
         PREPARE_PARAMS="--core-file --use-free-memory-pct=20"
     else
         echo "Test: Incremental Backup and Restore with ${load_tool}"
@@ -369,7 +369,7 @@ run_load_tests() {
 
     if [[ "$1" = "pagetracking" ]]; then
         echo "Running test with page tracking enabled"
-        BACKUP_PARAMS="--core-file --lock-ddl=ON --page-tracking"
+        BACKUP_PARAMS="--core-file --lock-ddl=REDUCED --page-tracking"
         "${mysqldir}"/bin/mysql -uroot -S"${mysqldir}"/socket.sock -e "INSTALL COMPONENT 'file://component_mysqlbackup';"
     fi
 
@@ -382,7 +382,7 @@ run_load_tests() {
 run_load_keyring_plugin_tests() {
 
   # This function runs the load backup tests with keyring_file plugin options
-  BACKUP_PARAMS="--keyring_file_data=${mysqldir}/keyring --xtrabackup-plugin-dir=${xtrabackup_dir}/../lib/plugin --core-file --lock-ddl=ON"
+  BACKUP_PARAMS="--keyring_file_data=${mysqldir}/keyring --xtrabackup-plugin-dir=${xtrabackup_dir}/../lib/plugin --core-file --lock-ddl=REDUCED"
   PREPARE_PARAMS="--keyring_file_data=${mysqldir}/keyring --xtrabackup-plugin-dir=${xtrabackup_dir}/../lib/plugin --core-file"
   RESTORE_PARAMS="${PREPARE_PARAMS}"
 
@@ -686,14 +686,14 @@ run_crash_tests_pstress() {
     elif [[ "${test_type}" = "rocksdb" ]]; then
       echo "Running crash tests with ${load_tool} for rocksdb"
       MYSQLD_OPTIONS="--log-bin=binlog --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --max-connections=5000"
-      BACKUP_PARAMS="--core-file --lock-ddl=ON"
+      BACKUP_PARAMS="--core-file --lock-ddl=REDUCED"
       PREPARE_PARAMS="--core-file"
       RESTORE_PARAMS=""
       load_options="--tables 10 --records 1000 --threads 10 --seconds 150 --no-encryption --engine=rocksdb"
     else
       echo "Running crash tests with ${load_tool}"
       MYSQLD_OPTIONS="--log-bin=binlog --log-slave-updates --gtid-mode=ON --enforce-gtid-consistency --binlog-format=row --master_verify_checksum=ON --binlog_checksum=CRC32 --max-connections=5000"
-      BACKUP_PARAMS="--core-file --lock-ddl=ON"
+      BACKUP_PARAMS="--core-file --lock-ddl=REDUCED"
       PREPARE_PARAMS="--core-file"
       RESTORE_PARAMS=""
       if [ $MS -eq 1 ]; then
@@ -728,7 +728,7 @@ run_crash_tests_pstress() {
     echo "..Metadata created"
     run_load "${load_options} --step 2"
     echo "=>Taking full backup"
-    rr "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/full -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --register-redo-log-consumer 2>"${logdir}"/full_backup_"${log_date}"_log
+    "${xtrabackup_dir}"/xtrabackup --no-defaults --user=root --password='' --backup --target-dir="${backup_dir}"/full -S "${mysqldir}"/socket.sock --datadir="${datadir}" ${BACKUP_PARAMS} --register-redo-log-consumer 2>"${logdir}"/full_backup_"${log_date}"_log
     if [ "$?" -ne 0 ]; then
         echo "ERR: Full Backup failed. Please check the log at: ${logdir}/full_backup_${log_date}_log"
         exit 1
@@ -755,9 +755,9 @@ run_crash_tests_pstress() {
     for inc_num in $(seq 1 4); do
       echo "Taking incremental backup: $inc_num"
       if [ ${inc_num} -eq 1 ]; then
-        rr ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/full -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_backup_${log_date}_log
+        ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/full -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_backup_${log_date}_log
       else
-        rr ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/inc$((inc_num - 1)) -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_backup_${log_date}_log
+        ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/inc$((inc_num - 1)) -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_backup_${log_date}_log
       fi
       if [ "$?" -ne 0 ]; then
         echo "ERR: Incremental Backup failed. Please check the log at: ${logdir}/inc${inc_num}_backup_${log_date}_log"
@@ -779,9 +779,9 @@ run_crash_tests_pstress() {
     for ((inc_num=5;inc_num<9;inc_num++)); do
       echo "Taking incremental backup: $inc_num"
       if [ ${inc_num} -eq 1 ]; then
-        rr ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/full -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_${i}_backup_${log_date}_log
+        ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/full -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_${i}_backup_${log_date}_log
       else
-        rr ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/inc$((inc_num - 1)) -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_backup_${log_date}_log
+        ${xtrabackup_dir}/xtrabackup --no-defaults --user=root --password='' --backup --target-dir=${backup_dir}/inc${inc_num} --incremental-basedir=${backup_dir}/inc$((inc_num - 1)) -S ${mysqldir}/socket.sock --datadir=${datadir} ${BACKUP_PARAMS} --register-redo-log-consumer 2>${logdir}/inc${inc_num}_backup_${log_date}_log
       fi
       if [ "$?" -ne 0 ]; then
         echo "ERR: Incremental Backup failed. Please check the log at: ${logdir}/inc${inc_num}_backup_${log_date}_log"
@@ -967,9 +967,9 @@ for tsuitelist in $*; do
     Rocksdb_tests)
       if "${mysqldir}"/bin/mysqld --version | grep "5.7" >/dev/null 2>&1 ; then
         echo "Rocksdb backup is not supported in MS/PS 5.7, skipping tests"
-	continue
+	      continue
       fi
-      if ${mysqldir}/bin/mysqld --version | grep "8.2.0" > /dev/null 2>&1 ; then
+      if ${mysqldir}/bin/mysqld --version | grep "8.2" > /dev/null 2>&1 ; then
         echo "RocksDB is unsupported in MS, skipping tests"
         continue
       fi

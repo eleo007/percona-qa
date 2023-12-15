@@ -15,7 +15,7 @@
 #############################################################################
 
 # Set script variables
-export xtrabackup_dir="$HOME/PXB-8.0/target/bin"
+export xtrabackup_dir="$HOME/PXB-lock-ddl/target/bin"
 export mysqldir="$HOME/upstream-8.2/bld_8.2/install"
 export datadir="${mysqldir}/data"
 export backup_dir="$HOME/dbbackup_$(date +"%d_%m_%Y")"
@@ -969,7 +969,7 @@ for tsuitelist in $*; do
         echo "Rocksdb backup is not supported in MS/PS 5.7, skipping tests"
 	      continue
       fi
-      if ${mysqldir}/bin/mysqld --version | grep "8.2" > /dev/null 2>&1 ; then
+      if "${mysqldir}"/bin/mysqld --version | grep "8.2" > /dev/null 2>&1 ; then
         echo "RocksDB is unsupported in MS, skipping tests"
         continue
       fi
